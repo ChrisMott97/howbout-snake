@@ -48,6 +48,10 @@ Snake should e implemented in HTML, JavaScript and CSS based on the partial impl
     ```
   - **Response** `Status: 201 Created`
 
+## Design Notes
+- Main logo colour `#00b5a9`
+- Icon colour gradient `#00b5a9` bottom to `#00e0d1` top
+
 ## Future Features
 - [ ] Food type that reduces grid size for x moves
 - [ ] Food type that increases or decreases speed for x moves
