@@ -2,6 +2,8 @@
 
 ## Challenge
 Snake should e implemented in HTML, JavaScript and CSS based on the partial implementation provided. Complete the creation of the game and implement the High Scores feature.
+
+The project plan can be found at [PLAN.md](./PLAN.md)
 ## Rules
 - Must only be completed using raw JavaScript, HTML and CSS with no external libraries
 - Must work in the latest version of Google Chrome

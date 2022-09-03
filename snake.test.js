@@ -63,6 +63,7 @@ if(testing){
    * Testing Cleanup
    */
   complete()
+  console.log("Testing complete.")
 }
 
 
