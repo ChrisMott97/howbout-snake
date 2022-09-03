@@ -27,11 +27,13 @@
 </div>
 
 
-
+<script src="snake.test.js"></script>
 <script type="text/javascript">
-    const board = document.getElementById('board');
-    const controls = document.getElementById('controls');
-    const game = new SnakeGame(board, controls);
+    if(!testing){
+        const board = document.getElementById('board');
+        const controls = document.getElementById('controls');
+        const game = new SnakeGame(board, controls);
+    }
 </script>
 
 </body>
