@@ -4,12 +4,12 @@
 - [x] Implement basic test library
 - [ ] Reset function to reset classes and HTML for testing
 - [ ] Test existing code
-- [ ] Implement Snake body movement
-- [ ] Implement Snake tail creation and movement
+- [x] Implement Snake body movement
+- [x] Implement Snake tail creation and movement
 - [ ] Implement Food generation
 - [ ] Implement collision detection
-  - [ ] Wall
-  - [ ] Tail
+  - [x] Wall
+  - [x] Tail
   - [ ] Food
 - [ ] Implement scoreboard score submission
 - [ ] Implement scoreboard view

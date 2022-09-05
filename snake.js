@@ -1,14 +1,13 @@
-
+let game = null;
 class SnakeGame {
 
     static NUM_ROWS = 60;
     static NUM_COLS = 120;
-
+    
     boardCells = [];
     score = 0;
 
     constructor(board, controls) {
-
         this.board = board;
         this.controls = controls;
 
@@ -84,6 +83,8 @@ class SnakeGame {
 
             }
 
+            // cols and rows are passed by reference so changing boardCells
+            // affects board
             this.board.appendChild(row);
             this.boardCells.push(boardCellsRow);
 
@@ -186,6 +187,37 @@ class Snake {
         }
 
         // Todo: add the snake moving logic here and check if the snake hits a wall, itself, or food
+        switch(this.direction){
+            case 'up':
+                this.position.y -= 1;
+                break;
+            case 'down':
+                this.position.y += 1;
+                break;
+            case 'right':
+                this.position.x += 1;
+                break;
+            case 'left':
+                this.position.x -= 1;
+                break;
+        }
+        
+        if(this.hasCollided()){
+            this.game.gameOver();
+            this.pause();
+            return;
+        }
+
+        const {x,y} = this.position;
+        const nextSnake = this.game.boardCells[y][x];
+
+        nextSnake.classList.add('snake');
+        this.tail.push(nextSnake);
+
+        if(this.tail.length > this.tailLength){
+            this.tail[0].classList.remove('snake')
+            this.tail.shift()
+        }
 
         // Move another step in `this.speed` number of milliseconds
         this.movementTimer = setTimeout(() => { this.move(); }, this.speed);
@@ -196,9 +228,36 @@ class Snake {
      * Set the snake's direction
      */
     setDirection(direction) {
+        const upBlock = this.direction === 'down' && direction === 'up'
+        const downBlock = this.direction === 'up' && direction === 'down'
+        const rightBlock = this.direction === 'left' && direction === 'right'
+        const leftBlock = this.direction === 'right' && direction === 'left'
 
-        // Todo: update the snake's direction here
+        if(!upBlock && !downBlock && !rightBlock && !leftBlock){
+            this.direction = direction;
+        }
+    }
 
+    hasCollided() {
+        const {x,y} = this.position
+
+        const rightCollide = x >= SnakeGame.NUM_COLS
+        const leftCollide = x < 0
+        const upCollide = y < 0
+        const downCollide = y >= SnakeGame.NUM_ROWS
+
+        if(upCollide || downCollide || rightCollide || leftCollide){
+            return true;
+        }
+
+        const nextSnake = this.game.boardCells[y][x]
+        // Snake tail collision detection
+        this.tail.forEach(tailPart => {
+            if(tailPart === nextSnake){
+                return true;
+            }
+        })
+        return false;
     }
 
     /**
