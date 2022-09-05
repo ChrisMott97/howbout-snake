@@ -10,7 +10,9 @@
 <div id="logo-row">
     <img id="logo" src="./assets/images/logo.png" alt="Howbout Logo">
 </div>
-<div id="description-row"><span id="description">...a game of Snake!</span></div>
+<div id="description-row">
+    <span id="description">...a game of Snake!</span>
+</div>
 <div id="container">
     <div id="left-col">
         <div id="controls">
@@ -20,9 +22,6 @@
                 <button class="pause-button" onclick="game.snake.pause()">Pause</button>
                 <button class="resume-button" onclick="game.snake.move()">Resume</button>
             </div>
-            <div>
-                <h2>Score: <span class="score">0</span></h2>
-            </div>
         </div>
     </div>
     <div id="board">
@@ -31,7 +30,10 @@
         </div>
     </div>
     <div id="right-col">
-
+        <div>
+            <h2>Score</h2>
+            <h2 class="score">0</h2>
+        </div>
     </div>
 
 </div>

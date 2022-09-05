@@ -1,7 +1,7 @@
 class SnakeGame {
 
-    static NUM_ROWS = 30;
-    static NUM_COLS = 30;
+    static NUM_ROWS = 20;
+    static NUM_COLS = 20;
     
     boardCells = [];
     score = 0;
@@ -10,7 +10,7 @@ class SnakeGame {
         this.board = board;
         this.controls = controls;
 
-        this.scoreCounter = this.controls.querySelector('.score');
+        this.scoreCounter = document.querySelector('.score');
 
         this.initBoard();
 
@@ -112,6 +112,7 @@ class SnakeGame {
         this.food.reset();
         this.controls.classList.remove('game-over');
         this.board.classList.remove('game-over');
+        this.resetScore();
         this.play();
 
     }
@@ -122,6 +123,16 @@ class SnakeGame {
     increaseScore(amount) {
 
         this.score += amount;
+        this.scoreCounter.innerText = this.score;
+
+    }
+
+    /**
+     * Reset the user's score
+     */
+     resetScore() {
+
+        this.score = 0;
         this.scoreCounter.innerText = this.score;
 
     }
@@ -171,10 +182,12 @@ class Snake {
 
         const startCell = this.game.boardCells[y][x];
         startCell.classList.add('snake');
+        startCell.classList.add('head');
 
         this.tail.push(startCell);
 
     }
+
 
     /**
      * Move the snake
@@ -218,8 +231,11 @@ class Snake {
         }
 
         nextSnake.classList.add('snake');
+        nextSnake.classList.add('head');
+        this.tail[this.tail.length-1].classList.remove('head');
+        this.tail[this.tail.length-1].classList.add('body')
+        
         this.tail.push(nextSnake);
-
         if(this.tail.length > this.tailLength){
             this.tail[0].classList.remove('snake')
             this.tail.shift()
@@ -234,14 +250,21 @@ class Snake {
      * Set the snake's direction
      */
     setDirection(direction) {
-        const upBlock = this.direction === 'down' && direction === 'up'
-        const downBlock = this.direction === 'up' && direction === 'down'
-        const rightBlock = this.direction === 'left' && direction === 'right'
-        const leftBlock = this.direction === 'right' && direction === 'left'
-
-        // nextDirection used to ensure comparison with direction that's been executed
-        if(!upBlock && !downBlock && !rightBlock && !leftBlock){
+        if(!(this.direction === this.reverseDirection(direction))){
             this.nextDirection = direction;
+        }
+    }
+
+    reverseDirection(direction){
+        switch(direction){
+            case 'up':
+                return 'down';
+            case 'down':
+                return 'up';
+            case 'right':
+                return 'left';
+            case 'left':
+                return 'right';
         }
     }
 
@@ -298,8 +321,9 @@ class Snake {
 
 class Food {
 
-    constructor(game) {
+    static EMOJIS = ['😆', '😅', '😍', '😜', '😘', '😂', '🤩', '🥳']
 
+    constructor(game) {
         this.game = game;
         this.food = null;
     }
@@ -320,25 +344,28 @@ class Food {
         let foodOnTail = false;
         let x = null;
         let y = null;
+        let foodTile = null;
+
         while(!foodOnTail){
             x = Math.floor(Math.random() * SnakeGame.NUM_COLS);
             y = Math.floor(Math.random() * SnakeGame.NUM_ROWS);
-            const foodTile = this.game.boardCells[y][x];
+            foodTile = this.game.boardCells[y][x];
 
             if(!this.game.snake.tail.includes(foodTile)){
                 foodOnTail = true;
             }
         }
 
-        this.position = { x, y };
+        const randomEmoji = Food.EMOJIS[Math.floor(Math.random() * Food.EMOJIS.length)];
+        foodTile.innerText = randomEmoji
 
-        const foodCell = this.game.boardCells[y][x];
-        foodCell.classList.add('food');
-        this.food = foodCell;
+        foodTile.classList.add('food');
+        this.food = foodTile;
     }
 
     reset(){
         this.food.classList.remove('food');
+        this.food.innerText = "";
         this.food = null;
     }
 
