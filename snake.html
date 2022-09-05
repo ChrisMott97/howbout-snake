@@ -7,35 +7,43 @@
     <link rel="stylesheet" href="snake.css">
 </head>
 <body>
+<div id="logo-row">
+    <img id="logo" src="./assets/images/logo.png" alt="Howbout Logo">
+</div>
+<div id="description-row"><span id="description">...a game of Snake!</span></div>
+<div id="container">
+    <div id="left-col">
+        <div id="controls">
+            <div>
+                <button class="play-button" onclick="game.play()">Play</button>
+                <button class="restart-button" onclick="game.restart()">Restart</button>
+                <button class="pause-button" onclick="game.snake.pause()">Pause</button>
+                <button class="resume-button" onclick="game.snake.move()">Resume</button>
+            </div>
+            <div>
+                <h2>Score: <span class="score">0</span></h2>
+            </div>
+        </div>
+    </div>
+    <div id="board">
+        <div id="gameOver">
+            <h1>Game Over!</h1>
+        </div>
+    </div>
+    <div id="right-col">
 
-<div id="controls">
-    <div>
-        <button class="play-button" onclick="game.play()">Play</button>
-        <button class="restart-button" onclick="game.restart()">Restart</button>
-        <button class="pause-button" onclick="game.snake.pause()">Pause</button>
-        <button class="resume-button" onclick="game.snake.move()">Resume</button>
     </div>
-    <div>
-        <h2>Score: <span class="score">0</span></h2>
-    </div>
+
 </div>
 
-<div id="board">
-    <div id="gameOver">
-        <h1>Game Over!</h1>
-    </div>
-</div>
 
 
-<script src="snake.test.js"></script>
 <script type="text/javascript">
-    if(!testing){
-        const board = document.getElementById('board');
-        const controls = document.getElementById('controls');
-        game = new SnakeGame(board, controls);
-        console.log("game initialised.")
-    }
+    const board = document.getElementById('board');
+    const controls = document.getElementById('controls');
+    const game = new SnakeGame(board, controls);
 </script>
+<script src="snake.test.js"></script>
 
 </body>
 </html>

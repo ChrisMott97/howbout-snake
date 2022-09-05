@@ -1,8 +1,7 @@
-let game = null;
 class SnakeGame {
 
-    static NUM_ROWS = 60;
-    static NUM_COLS = 120;
+    static NUM_ROWS = 30;
+    static NUM_COLS = 30;
     
     boardCells = [];
     score = 0;
@@ -110,6 +109,7 @@ class SnakeGame {
     restart() {
 
         this.snake.reset();
+        this.food.reset();
         this.controls.classList.remove('game-over');
         this.board.classList.remove('game-over');
         this.play();
@@ -147,6 +147,7 @@ class Snake {
 
     tail = [];
     tailLength = 6;
+    nextDirection = 'up';
     direction = 'up';
     speed = 160;
     moving = false;
@@ -186,7 +187,8 @@ class Snake {
             this.game.controls.classList.remove('paused');
         }
 
-        // Todo: add the snake moving logic here and check if the snake hits a wall, itself, or food
+        this.direction = this.nextDirection;
+
         switch(this.direction){
             case 'up':
                 this.position.y -= 1;
@@ -211,6 +213,10 @@ class Snake {
         const {x,y} = this.position;
         const nextSnake = this.game.boardCells[y][x];
 
+        if(nextSnake === this.game.food.food){
+            this.game.food.move()
+        }
+
         nextSnake.classList.add('snake');
         this.tail.push(nextSnake);
 
@@ -233,14 +239,16 @@ class Snake {
         const rightBlock = this.direction === 'left' && direction === 'right'
         const leftBlock = this.direction === 'right' && direction === 'left'
 
+        // nextDirection used to ensure comparison with direction that's been executed
         if(!upBlock && !downBlock && !rightBlock && !leftBlock){
-            this.direction = direction;
+            this.nextDirection = direction;
         }
     }
 
     hasCollided() {
         const {x,y} = this.position
 
+        // Snake wall collision detection
         const rightCollide = x >= SnakeGame.NUM_COLS
         const leftCollide = x < 0
         const upCollide = y < 0
@@ -250,13 +258,12 @@ class Snake {
             return true;
         }
 
-        const nextSnake = this.game.boardCells[y][x]
         // Snake tail collision detection
-        this.tail.forEach(tailPart => {
-            if(tailPart === nextSnake){
-                return true;
-            }
-        })
+        const nextSnake = this.game.boardCells[y][x]
+        if(this.tail.includes(nextSnake)){
+            return true;
+        }
+
         return false;
     }
 
@@ -294,7 +301,7 @@ class Food {
     constructor(game) {
 
         this.game = game;
-
+        this.food = null;
     }
 
     /**
@@ -302,8 +309,37 @@ class Food {
      */
     move() {
 
-        // Todo: write this
+        if(this.food){
+            this.game.increaseScore(1);
+            this.game.snake.speed -= 5;
+            this.game.snake.tailLength += 1;
+            this.reset()
+        }
 
+        // Ensure food doesn't spawn on tail
+        let foodOnTail = false;
+        let x = null;
+        let y = null;
+        while(!foodOnTail){
+            x = Math.floor(Math.random() * SnakeGame.NUM_COLS);
+            y = Math.floor(Math.random() * SnakeGame.NUM_ROWS);
+            const foodTile = this.game.boardCells[y][x];
+
+            if(!this.game.snake.tail.includes(foodTile)){
+                foodOnTail = true;
+            }
+        }
+
+        this.position = { x, y };
+
+        const foodCell = this.game.boardCells[y][x];
+        foodCell.classList.add('food');
+        this.food = foodCell;
+    }
+
+    reset(){
+        this.food.classList.remove('food');
+        this.food = null;
     }
 
 }

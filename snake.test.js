@@ -45,12 +45,12 @@ if(testing){
    */
   console.log("Testing beginning...")
 
-  const board = document.getElementById('board');
-  const controls = document.getElementById('controls');
+  // const board = document.getElementById('board');
+  // const controls = document.getElementById('controls');
   board.style.display = 'none';
   controls.style.display = 'none';
 
-  const game = new SnakeGame(board, controls);
+  // const game = new SnakeGame(board, controls);
 
   /**
    * Tests

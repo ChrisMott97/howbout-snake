@@ -2,6 +2,48 @@ html, body {
     margin: 0;
 }
 
+@font-face {
+    font-family: 'Pacifico';
+    font-style: normal;
+    font-weight: 500;
+    src: url(./assets/fonts/pacifico/Pacifico.ttf) format('truetype');
+}
+
+#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#left-col{
+    width: auto;
+    flex: 1;
+}
+#right-col{
+    width: auto;
+    flex: 1;
+}
+#logo-row, #description-row{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+#logo-row{
+    margin-top: 10px;
+}
+#description-row{
+    margin-top: -10px;
+    color: #cc427b;
+}
+#logo{
+    margin-right: 200px;
+    height: 8vh;
+}
+#description{
+    margin-left: 200px;
+    font-size: 1.8rem;
+    font-family: "Pacifico";
+}
+
 #controls.playing .play-button, #controls.game-over .play-button {
     display: none;
 }
@@ -19,13 +61,16 @@ html, body {
 }
 
 #board {
+    border-radius: 10px;
     display: flex;
+    flex: 1;
     flex-direction: column;
     height: 80vh;
-    width: 80vw;
+    width: 80vh;
     border: 2px solid #000;
-    margin: 20px 10vw;
+    margin: 0 auto;
     position: relative;
+    aspect-ratio: 1/1;
 }
 
 div.row {
@@ -36,13 +81,14 @@ div.row {
 div.col {
     flex: 1;
     height: 100%;
+    width: 100%
 }
 div.col.snake {
     background: #000 !important;
 }
 
 div.col.food {
-    background: #000;
+    background: #f00;
 }
 
 div#gameOver {

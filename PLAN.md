@@ -6,11 +6,11 @@
 - [ ] Test existing code
 - [x] Implement Snake body movement
 - [x] Implement Snake tail creation and movement
-- [ ] Implement Food generation
-- [ ] Implement collision detection
+- [x] Implement Food generation
+- [x] Implement collision detection
   - [x] Wall
   - [x] Tail
-  - [ ] Food
+  - [x] Food
 - [ ] Implement scoreboard score submission
 - [ ] Implement scoreboard view
 - [ ] Design Howbout-like interface around game
