@@ -12,8 +12,11 @@
   - [x] Tail
   - [x] Food
 - [ ] Implement scoreboard score submission
-- [ ] Implement scoreboard view
-- [ ] Design Howbout-like interface around game
+- [x] Implement scoreboard view
+- [x] Design Howbout-like interface around game
+- [ ] Scale emojis with varying size board grid
+- [x] Queue 2 moves to ensure accurate input
+- [ ] Add Space keyboard shortcut to pause and play
 - [ ] Plan end-to-end tests
 
 ## Test Plan

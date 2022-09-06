@@ -180,7 +180,7 @@ html, body {
     margin: 0 auto;
     position: relative;
     aspect-ratio: 1/1;
-    padding: 5px;
+    padding: 2px;
     /* background-image: url(./assets/images/city.png); */
 }
 
@@ -188,13 +188,17 @@ div.row {
     flex: 1;
     display: flex;
     flex-direction: row;
+    text-align: center;
+    justify-content: center;
 }
 div.col {
     flex: 1;
-    height: 20px;
-    width: 20px;
-    font-size: 23px;
+    /* height: 20px; */
+    /* width: 20px; */
+    font-size: 3vh;
+    line-height: 3vh;
     text-align: center;
+    justify-content: center;
 }
 div.col.snake {
     /* border-radius: 20px; */
@@ -224,6 +228,8 @@ div#gameOver {
 }
 #board.game-over div#gameOver {
     display: block;
+    background-color: rgba(255,255,255,0.8);
+    border-radius: 20px;
 }
 
 /* div#gameOver>h1{

@@ -2,6 +2,7 @@ class SnakeGame {
 
     static NUM_ROWS = 20;
     static NUM_COLS = 20;
+    static EMOJIS = ['🧒', '👩', '👵', '👨‍🦳', '👩‍🦰', '🧑‍🦰', '💂‍♀️', '👩‍🎤']
     
     boardCells = [];
     score = 0;
@@ -11,8 +12,10 @@ class SnakeGame {
         this.controls = controls;
 
         this.scoreCounter = document.querySelector('.score');
+        this.scoreboard = document.querySelector('.scoreboard');
 
         this.initBoard();
+        this.refreshScoreboard();
 
         this.snake = new Snake(this);
         this.food = new Food(this);
@@ -92,6 +95,66 @@ class SnakeGame {
     }
 
     /**
+     * Build and load the scoreboard
+     */
+    refreshScoreboard() {
+
+        const generateHeadRow = () => {
+            const row = document.createElement('tr');
+            const headings = ['Score', 'Name', 'Date']
+            const ids = ['score', 'name', 'date']
+
+            for (const [i, heading] of headings.entries()) {
+                let th = document.createElement('th');
+                th.innerHTML = `<u>${heading}</u>`;
+                th.id = ids[i]
+                row.appendChild(th);
+            }
+
+            return row;
+        }
+
+        const generateScoreRow = (record) => {
+            const row = document.createElement('tr');
+            const props = ['score', 'name', 'created_at']
+
+            for (const prop of props) {
+                let td = document.createElement('td');
+                if(prop === 'created_at'){
+                    td.innerHTML = new Date(record[prop]).toLocaleDateString();
+                }else{
+                    td.innerHTML = record[prop];
+                }
+                row.appendChild(td);
+            }
+
+            return row;
+
+        }
+
+        const scoreboard = document.querySelector('#scoreboard>table')
+
+        // Clear all elements to refresh scoreboard
+        scoreboard.replaceChildren();
+
+        const headRow = generateHeadRow();
+        scoreboard.appendChild(headRow);
+
+        fetch("https://snake.howbout.app/api/mott/high-scores").then((res) => {
+            if(res.ok){
+                res.json().then((records)=>{
+                    records = records.sort((a, b) => b.score - a.score);
+                    for (const record of records) {
+                        const el = generateScoreRow(record);
+                        scoreboard.appendChild(el);
+                    }
+                })
+            }
+        })
+
+    }
+
+    /**
      * Begin the game
      */
     play() {
@@ -110,8 +173,10 @@ class SnakeGame {
 
         this.snake.reset();
         this.food.reset();
+
         this.controls.classList.remove('game-over');
         this.board.classList.remove('game-over');
+
         this.resetScore();
         this.play();
 
@@ -137,51 +202,20 @@ class SnakeGame {
 
     }
 
+    getRandomEmoji() {
+        return SnakeGame.EMOJIS[Math.floor(Math.random() * SnakeGame.EMOJIS.length)];
+    }
+
     /**
      * End the game
      */
     async gameOver() {
-        const newScore = (record) => {
-            const row = document.createElement('tr');
-            const scoreEl = document.createElement('td');
-            const nameEl = document.createElement('td');
-            const dateEl = document.createElement('td');
-
-            // scoreEl.classList.add('scoreCSS')
-            // nameEl.classList.add('name')
-            // dateEl.classList.add('date')
-            
-            const dateString = record.created_at;
-            const newDate = new Date(dateString);
         
-            scoreEl.innerText = record.score;
-            nameEl.innerHTML = record.name;
-            dateEl.innerHTML = newDate.toLocaleDateString();
-
-            row.appendChild(scoreEl)
-            row.appendChild(nameEl)
-            row.appendChild(dateEl)
-            return row;
-        }
-
         this.snake.pause();
 
         this.controls.classList.remove('playing');
         this.controls.classList.add('game-over');
         this.board.classList.add('game-over');
-
-        const scoreboard = document.querySelector('#scoreboard>table')
-
-        const res = await fetch("https://snake.howbout.app/api/mott/high-scores")
-        if(res.ok){
-            let records = await res.json();
-            records = records.sort((a, b) => b.score - a.score);
-            console.log(records)
-            records.forEach(record => {
-                const el = newScore(record);
-                scoreboard.appendChild(el);
-            });
-        }
 
     }
 
@@ -189,15 +223,17 @@ class SnakeGame {
 
 class Snake {
 
-    static STARTING_EDGE_OFFSET = 20;
+    static STARTING_EDGE_OFFSET = 6;
 
     tail = [];
     tailSpecifics = [];
     tailLength = 2;
-    nextDirection = 'up';
+    directionQueue = [];
+    directionQueueLength = 2
     direction = 'up';
     speed = 160;
     moving = false;
+    headEmoji = "😎";
 
     constructor(game) {
 
@@ -212,22 +248,39 @@ class Snake {
      */
     init() {
 
+        // check for uneven starting edge offset
         const x = Math.floor(Math.random() * (SnakeGame.NUM_COLS - Snake.STARTING_EDGE_OFFSET)) + (Snake.STARTING_EDGE_OFFSET / 2);
         const y = Math.floor(Math.random() * (SnakeGame.NUM_ROWS - Snake.STARTING_EDGE_OFFSET)) + (Snake.STARTING_EDGE_OFFSET / 2);
         this.position = { x, y };
 
         const startCell = this.game.boardCells[y][x];
         startCell.classList.add('snake');
-        startCell.classList.add('head');
 
-        const secondCell = this.game.boardCells[y][x]
-        secondCell.classList.add('snake');
+        this.tailSpecifics.push(this.headEmoji);
+
+        for (let i = 0; i < this.tailLength - 1; i++) {
+            this.tailSpecifics.push(this.game.getRandomEmoji());
+        }
         
-        this.tailSpecifics.push("😎")
-        this.tailSpecifics.push("🧑‍🦱")
         this.tail.push(startCell);
-        this.tail.push(secondCell)
 
+        this.updateTail();
+
+    }
+
+    updateTail(){
+        const reversedTailSpecifics = [...this.tailSpecifics].reverse()
+        const partToRemove = this.tail[0]
+
+        if(this.tail.length > this.tailLength){
+            partToRemove.classList.remove('snake');
+            partToRemove.innerText = "";
+            this.tail.shift()
+        }
+
+        for (const [i, part] of this.tail.entries()) {
+            part.innerText = reversedTailSpecifics[i]
+        }
     }
 
 
@@ -242,7 +295,10 @@ class Snake {
             this.game.controls.classList.remove('paused');
         }
 
-        this.direction = this.nextDirection;
+        if(this.directionQueue.length > 0){
+            this.direction = this.directionQueue[0]
+            this.directionQueue.shift()
+        }
 
         switch(this.direction){
             case 'up':
@@ -268,40 +324,52 @@ class Snake {
         const {x,y} = this.position;
         const nextSnake = this.game.boardCells[y][x];
 
-        if(nextSnake === this.game.food.food){
+        if(nextSnake === this.game.food.currentFood){
+            this.upgrade()
             this.game.food.move()
         }
 
         nextSnake.classList.add('snake');
         this.tail.push(nextSnake);
-        this.processTail()
+
+        this.updateTail()
 
         // Move another step in `this.speed` number of milliseconds
         this.movementTimer = setTimeout(() => { this.move(); }, this.speed);
 
     }
 
-    processTail(){
-        if(this.tail.length > this.tailLength){
-            this.tail[0].classList.remove('snake')
-            this.tail[0].innerText = ""
-            this.tail.shift()
-        }
-
-        const reversedTailSpecifics = [...this.tailSpecifics].reverse()
-        for (let i = 0; i < this.tail.length; i++) {
-            const tailPart = this.tail[i];
-            tailPart.innerText = reversedTailSpecifics[i]
-        }
-    }
-
     /**
      * Set the snake's direction
      */
     setDirection(direction) {
-        if(!(this.direction === this.reverseDirection(direction))){
-            this.nextDirection = direction;
+        const firstItemCheck = !(this.direction === this.reverseDirection(direction)) && !(this.direction === direction)
+        const secondItemCheck = !(this.directionQueue[0] === this.reverseDirection(direction)) && !(this.directionQueue[0] === direction)
+        switch(this.directionQueue.length){
+            case 0:
+                if(firstItemCheck){
+                    this.directionQueue.push(direction);
+                }
+                break;
+            case 1:
+                if(secondItemCheck){
+                    this.directionQueue.push(direction)
+                }
+                break;
+            case 2:
+                if(secondItemCheck){
+                    this.directionQueue[1] = direction
+                }
+                break;
         }
+        
+    }
+
+    upgrade(){
+        this.game.increaseScore(1);
+        this.speed -= 5;
+        this.tailLength += 1;
+        this.tailSpecifics.push(this.game.food.currentFood.innerText)
     }
 
     reverseDirection(direction){
@@ -357,6 +425,7 @@ class Snake {
             this.tail[i].classList.remove('snake');
             this.tail[i].innerText = ""
         }
+
         this.tail.length = 0;
         this.tailLength = 2;
         this.direction = 'up';
@@ -371,11 +440,9 @@ class Snake {
 
 class Food {
 
-    static EMOJIS = ['🧒', '👩', '👵', '👨‍🦳', '👩‍🦰', '🧑‍🦰', '💂‍♀️', '👩‍🎤']
-
     constructor(game) {
         this.game = game;
-        this.food = null;
+        this.currentFood = null;
     }
 
     /**
@@ -383,11 +450,8 @@ class Food {
      */
     move() {
 
-        if(this.food){
-            this.game.increaseScore(1);
-            this.game.snake.speed -= 5;
-            this.game.snake.tailLength += 1;
-            this.game.snake.tailSpecifics.push(this.food.innerText)
+        if(this.currentFood){
+            
             this.reset()
         }
 
@@ -402,22 +466,23 @@ class Food {
             y = Math.floor(Math.random() * SnakeGame.NUM_ROWS);
             foodTile = this.game.boardCells[y][x];
 
-            if(!this.game.snake.tail.includes(foodTile)){
+            if(!foodTile.classList.contains('snake')){
                 foodOnTail = false;
             }
-        }
 
-        const randomEmoji = Food.EMOJIS[Math.floor(Math.random() * Food.EMOJIS.length)];
-        foodTile.innerText = randomEmoji
+        }
+        
+        console.log(foodTile)
+        foodTile.innerText = this.game.getRandomEmoji();
 
         foodTile.classList.add('food');
-        this.food = foodTile;
+        this.currentFood = foodTile;
     }
 
     reset(){
-        this.food.classList.remove('food');
-        this.food.innerText = "";
-        this.food = null;
+        this.currentFood.classList.remove('food');
+        this.currentFood.innerText = "";
+        this.currentFood = null;
     }
 
 }
