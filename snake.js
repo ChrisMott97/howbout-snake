@@ -157,7 +157,8 @@ class Snake {
     static STARTING_EDGE_OFFSET = 20;
 
     tail = [];
-    tailLength = 6;
+    tailSpecifics = [];
+    tailLength = 2;
     nextDirection = 'up';
     direction = 'up';
     speed = 160;
@@ -184,7 +185,13 @@ class Snake {
         startCell.classList.add('snake');
         startCell.classList.add('head');
 
+        const secondCell = this.game.boardCells[y][x]
+        secondCell.classList.add('snake');
+        
+        this.tailSpecifics.push("😎")
+        this.tailSpecifics.push("🧑‍🦱")
         this.tail.push(startCell);
+        this.tail.push(secondCell)
 
     }
 
@@ -231,19 +238,26 @@ class Snake {
         }
 
         nextSnake.classList.add('snake');
-        nextSnake.classList.add('head');
-        this.tail[this.tail.length-1].classList.remove('head');
-        this.tail[this.tail.length-1].classList.add('body')
-
         this.tail.push(nextSnake);
-        if(this.tail.length > this.tailLength){
-            this.tail[0].classList.remove('snake')
-            this.tail.shift()
-        }
+        this.processTail()
 
         // Move another step in `this.speed` number of milliseconds
         this.movementTimer = setTimeout(() => { this.move(); }, this.speed);
 
+    }
+
+    processTail(){
+        if(this.tail.length > this.tailLength){
+            this.tail[0].classList.remove('snake')
+            this.tail[0].innerText = ""
+            this.tail.shift()
+        }
+
+        const reversedTailSpecifics = [...this.tailSpecifics].reverse()
+        for (let i = 0; i < this.tail.length; i++) {
+            const tailPart = this.tail[i];
+            tailPart.innerText = reversedTailSpecifics[i]
+        }
     }
 
     /**
@@ -306,9 +320,10 @@ class Snake {
 
         for (let i = 0; i < this.tail.length; i++) {
             this.tail[i].classList.remove('snake');
+            this.tail[i].innerText = ""
         }
         this.tail.length = 0;
-        this.tailLength = 6;
+        this.tailLength = 2;
         this.direction = 'up';
         this.speed = 160;
         this.moving = false;
@@ -321,7 +336,7 @@ class Snake {
 
 class Food {
 
-    static EMOJIS = ['😆', '😅', '😍', '😜', '😘', '😂', '🤩', '🥳']
+    static EMOJIS = ['🧒', '👩', '👵', '👨‍🦳', '👩‍🦰', '🧑‍🦰', '💂‍♀️', '👩‍🎤']
 
     constructor(game) {
         this.game = game;
@@ -337,6 +352,7 @@ class Food {
             this.game.increaseScore(1);
             this.game.snake.speed -= 5;
             this.game.snake.tailLength += 1;
+            this.game.snake.tailSpecifics.push(this.food.innerText)
             this.reset()
         }
 
