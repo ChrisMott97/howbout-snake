@@ -141,12 +141,47 @@ class SnakeGame {
      * End the game
      */
     async gameOver() {
+        const newScore = (record) => {
+            const row = document.createElement('tr');
+            const scoreEl = document.createElement('td');
+            const nameEl = document.createElement('td');
+            const dateEl = document.createElement('td');
+
+            // scoreEl.classList.add('scoreCSS')
+            // nameEl.classList.add('name')
+            // dateEl.classList.add('date')
+            
+            const dateString = record.created_at;
+            const newDate = new Date(dateString);
+        
+            scoreEl.innerText = record.score;
+            nameEl.innerHTML = record.name;
+            dateEl.innerHTML = newDate.toLocaleDateString();
+
+            row.appendChild(scoreEl)
+            row.appendChild(nameEl)
+            row.appendChild(dateEl)
+            return row;
+        }
 
         this.snake.pause();
 
         this.controls.classList.remove('playing');
         this.controls.classList.add('game-over');
         this.board.classList.add('game-over');
+
+        const scoreboard = document.querySelector('#scoreboard>table')
+
+        const res = await fetch("https://snake.howbout.app/api/mott/high-scores")
+        if(res.ok){
+            let records = await res.json();
+            records = records.sort((a, b) => b.score - a.score);
+            console.log(records)
+            records.forEach(record => {
+                const el = newScore(record);
+                scoreboard.appendChild(el);
+            });
+        }
 
     }
 
@@ -357,18 +392,18 @@ class Food {
         }
 
         // Ensure food doesn't spawn on tail
-        let foodOnTail = false;
+        let foodOnTail = true;
         let x = null;
         let y = null;
         let foodTile = null;
 
-        while(!foodOnTail){
+        while(foodOnTail){
             x = Math.floor(Math.random() * SnakeGame.NUM_COLS);
             y = Math.floor(Math.random() * SnakeGame.NUM_ROWS);
             foodTile = this.game.boardCells[y][x];
 
             if(!this.game.snake.tail.includes(foodTile)){
-                foodOnTail = true;
+                foodOnTail = false;
             }
         }
 
