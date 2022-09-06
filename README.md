@@ -55,6 +55,7 @@ The project plan can be found at [PLAN.md](./PLAN.md)
 - Icon colour gradient `#00b5a9` bottom to `#00e0d1` top
 
 ## Future Features
+- [ ] Food type that reverses directions for x moves
 - [ ] Food type that reduces grid size for x moves
 - [ ] Food type that increases or decreases speed for x moves
 - [ ] Food type that opens borders for x moves

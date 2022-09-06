@@ -234,7 +234,7 @@ class Snake {
         nextSnake.classList.add('head');
         this.tail[this.tail.length-1].classList.remove('head');
         this.tail[this.tail.length-1].classList.add('body')
-        
+
         this.tail.push(nextSnake);
         if(this.tail.length > this.tailLength){
             this.tail[0].classList.remove('snake')

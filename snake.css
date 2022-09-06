@@ -25,10 +25,14 @@ html, body {
 #left-col{
     width: auto;
     flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #00e0d1;
     /* background-image: linear-gradient(to bottom right, #00b5a9, #00e0d1); */
     margin-right: 10px;
-    border-radius: 0 10px 10px 0;
+    margin-left: 10px;
+    border-radius: 20px;
     height: 80vh;
 }
 #right-col{
@@ -40,8 +44,10 @@ html, body {
     background-color: #00e0d1;
     /* background-image: linear-gradient(to top right, #00e0d1, #00b5a9); */
     margin-left: 10px;
-    border-radius: 10px 0 0 10px;
+    margin-right: 10px;
+    border-radius: 20px;
     height: 80vh;
+    color: white;
 }
 .score{
     text-align: center;
@@ -58,7 +64,7 @@ html, body {
 #description-row{
     margin-top: -10px;
     margin-bottom: 5px;
-    color: rgb(204, 66, 123);
+    color: #cc427b;
 }
 #logo{
     margin-right: 200px;
@@ -86,14 +92,66 @@ html, body {
     display: none;
 }
 
+#controls>div>button{
+    width: 15vw;
+    height: 5vh;
+    background-color: transparent;
+    border: solid;
+    color: white;
+    border-color: white;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    box-shadow: 4px 4px #fff;
+}
+#controls>div>button:hover{
+    box-shadow: 2px 2px;
+}
+#controls>div>button:active{
+    box-shadow: 0px 0px;
+}
+
+#left-col, #legend{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+#left-col{
+    justify-content: space-around;
+}
+
+#legend{
+    margin: 10px;
+}
+
+#legend>div>button{
+    width: 6vw;
+    height: 10vh;
+    background-color: transparent;
+    border: solid;
+    color: white;
+    border-color: white;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    box-shadow: 4px 4px #fff;
+    margin: 5px;
+}
+
+#top-row{
+    display:flex;
+    align-content: center;
+    justify-content: space-evenly;
+    margin-bottom: 3px;
+}
+
 #board {
-    border-radius: 10px;
+    border-radius: 20px;
     display: flex;
     flex: 1;
     flex-direction: column;
     height: 80vh;
     width: 80vh;
-    border: 4px solid #cc427b;
+    border: 8px solid #cc427b;
     box-sizing: border-box;
     /* box-shadow: 0px 0px 10px  rgba(204, 66, 123, 1); */
     margin: 0 auto;

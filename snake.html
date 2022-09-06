@@ -15,6 +15,21 @@
 </div>
 <div id="container">
     <div id="left-col">
+        <div id="brief">
+            <div>
+                <span id="brief-text">Using the arrow keys or WASD as shown below, move the snake to feed it emojis!</span>
+            </div>
+        </div>
+        <div id="legend">
+            <div id="top-row">
+                <button onclick="game.snake.setDirection('up')"><kbd>W</kbd></button>
+            </div>
+            <div id="bottom-row">
+                <button onclick="game.snake.setDirection('left')"><kbd>A</kbd></button>
+                <button onclick="game.snake.setDirection('down')"><kbd>S</kbd></button>
+                <button onclick="game.snake.setDirection('right')"><kbd>D</kbd></button>
+            </div>
+        </div>
         <div id="controls">
             <div>
                 <button class="play-button" onclick="game.play()">Play</button>
