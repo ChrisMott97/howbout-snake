@@ -17,6 +17,7 @@
 - [ ] Scale emojis with varying size board grid
 - [x] Queue 2 moves to ensure accurate input
 - [ ] Add Space keyboard shortcut to pause and play
+- [ ] Decide on collision based on current snake or next snake
 - [ ] Plan end-to-end tests
 
 ## Test Plan

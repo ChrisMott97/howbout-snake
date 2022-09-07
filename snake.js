@@ -4,15 +4,21 @@ class SnakeGame {
     static NUM_COLS = 20;
     static EMOJIS = ['🧒', '👩', '👵', '👨‍🦳', '👩‍🦰', '🧑‍🦰', '💂‍♀️', '👩‍🎤']
     
-    boardCells = [];
-    score = 0;
+    board = [];
+    #score = 0;
 
-    constructor(board, controls) {
-        this.board = board;
-        this.controls = controls;
+    constructor(boardEl, controlsEl) {
+        this.boardEl = boardEl;
+        this.controlsEl = controlsEl;
 
-        this.scoreCounter = document.querySelector('.score');
+        this.scoreEl = document.querySelector('.score');
         this.scoreboard = document.querySelector('.scoreboard');
+        this.nameForm = document.querySelector('#nameForm');
+        this.nameInput = document.querySelector('#nameInput');
+
+        this.nameForm.addEventListener("submit", function(evt) {
+            evt.preventDefault();
+        }, true);
 
         this.initBoard();
         this.refreshScoreboard();
@@ -51,7 +57,7 @@ class SnakeGame {
     }
 
     /**
-     * Build the board using rows of cells
+     * Build the boardEl using rows of cells
      */
     initBoard() {
 
@@ -74,24 +80,47 @@ class SnakeGame {
         for (let r = 0; r < SnakeGame.NUM_ROWS; r++) {
 
             const row = newRow(r);
-            const boardCellsRow = [];
+            const bCellsRow = [];
 
             // For each number of columns make a new column element and add to the row
             for (let c = 0; c < SnakeGame.NUM_COLS; c++) {
 
                 const col = newCol(c);
                 row.appendChild(col);
-                boardCellsRow.push(col);
+                bCellsRow.push(col);
 
             }
 
-            // cols and rows are passed by reference so changing boardCells
-            // affects board
-            this.board.appendChild(row);
-            this.boardCells.push(boardCellsRow);
+            // cols and rows are passed by reference so changing board
+            // affects boardEl
+            this.boardEl.appendChild(row);
+            this.board.push(bCellsRow);
 
         }
 
+    }
+
+    get score(){
+        return this.#score;
+    }
+
+    set score(newScore){
+        this.#score = newScore;
+        this.scoreEl.textContent = newScore;
+    }
+
+    /**
+     * Increment the user's score
+     */
+    increaseScore(amount = 1) {
+        this.score += amount;
+    }
+
+    /**
+     * Reset the user's score
+     */
+    resetScore() {
+        this.score = 0;
     }
 
     /**
@@ -129,7 +158,6 @@ class SnakeGame {
             }
 
             return row;
-
         }
 
         const scoreboard = document.querySelector('#scoreboard>table')
@@ -159,7 +187,7 @@ class SnakeGame {
      */
     play() {
 
-        this.controls.classList.add('playing');
+        this.controlsEl.classList.add('playing');
 
         this.snake.move();
         this.food.move();
@@ -174,31 +202,11 @@ class SnakeGame {
         this.snake.reset();
         this.food.reset();
 
-        this.controls.classList.remove('game-over');
-        this.board.classList.remove('game-over');
+        this.controlsEl.classList.remove('game-over');
+        this.boardEl.classList.remove('game-over');
 
         this.resetScore();
         this.play();
-
-    }
-
-    /**
-     * Increment the user's score
-     */
-    increaseScore(amount) {
-
-        this.score += amount;
-        this.scoreCounter.innerText = this.score;
-
-    }
-
-    /**
-     * Reset the user's score
-     */
-     resetScore() {
-
-        this.score = 0;
-        this.scoreCounter.innerText = this.score;
 
     }
 
@@ -213,9 +221,9 @@ class SnakeGame {
         
         this.snake.pause();
 
-        this.controls.classList.remove('playing');
-        this.controls.classList.add('game-over');
-        this.board.classList.add('game-over');
+        this.controlsEl.classList.remove('playing');
+        this.controlsEl.classList.add('game-over');
+        this.boardEl.classList.add('game-over');
 
     }
 
@@ -225,22 +233,22 @@ class Snake {
 
     static STARTING_EDGE_OFFSET = 6;
 
-    tail = [];
-    tailSpecifics = [];
-    tailLength = 2;
-    directionQueue = [];
-    directionQueueLength = 2
-    direction = 'up';
-    speed = 160;
-    moving = false;
-    headEmoji = "😎";
-
     constructor(game) {
-
+        this.setDefaults();
         this.game = game;
-
         this.init();
+    }
 
+    setDefaults(){
+        this.tail = [];
+        this.tailSpecifics = [];
+        this.tailLength = 2;
+        this.directionQueue = [];
+        this.directionQueueLength = 2
+        this.direction = 'up';
+        this.speed = 160;
+        this.moving = false;
+        this.headEmoji = "😎";
     }
 
     /**
@@ -253,7 +261,7 @@ class Snake {
         const y = Math.floor(Math.random() * (SnakeGame.NUM_ROWS - Snake.STARTING_EDGE_OFFSET)) + (Snake.STARTING_EDGE_OFFSET / 2);
         this.position = { x, y };
 
-        const startCell = this.game.boardCells[y][x];
+        const startCell = this.game.board[y][x];
         startCell.classList.add('snake');
 
         this.tailSpecifics.push(this.headEmoji);
@@ -292,7 +300,7 @@ class Snake {
         // If this is the first move, make sure the game isn't paused
         if (!this.moving) {
             this.moving = true;
-            this.game.controls.classList.remove('paused');
+            this.game.controlsEl.classList.remove('paused');
         }
 
         if(this.directionQueue.length > 0){
@@ -322,7 +330,7 @@ class Snake {
         }
 
         const {x,y} = this.position;
-        const nextSnake = this.game.boardCells[y][x];
+        const nextSnake = this.game.board[y][x];
 
         if(nextSnake === this.game.food.currentFood){
             this.upgrade()
@@ -366,8 +374,8 @@ class Snake {
     }
 
     upgrade(){
-        this.game.increaseScore(1);
-        this.speed -= 5;
+        this.game.increaseScore();
+        this.speed -= 2;
         this.tailLength += 1;
         this.tailSpecifics.push(this.game.food.currentFood.innerText)
     }
@@ -399,7 +407,7 @@ class Snake {
         }
 
         // Snake tail collision detection
-        const nextSnake = this.game.boardCells[y][x]
+        const nextSnake = this.game.board[y][x]
         if(this.tail.includes(nextSnake)){
             return true;
         }
@@ -413,25 +421,19 @@ class Snake {
     pause() {
         clearTimeout(this.movementTimer);
         this.moving = false;
-        this.game.controls.classList.add('paused');
+        this.game.controlsEl.classList.add('paused');
     }
 
     /**
      * Reset the snake back to the initial defaults
      */
     reset() {
-
-        for (let i = 0; i < this.tail.length; i++) {
-            this.tail[i].classList.remove('snake');
-            this.tail[i].innerText = ""
+        for (const tailPart of this.tail) {
+            tailPart.classList.remove('snake');
+            tailPart.innerText = ""
         }
 
-        this.tail.length = 0;
-        this.tailLength = 2;
-        this.direction = 'up';
-        this.speed = 160;
-        this.moving = false;
-
+        this.setDefaults();
         this.init();
 
     }
@@ -446,43 +448,43 @@ class Food {
     }
 
     /**
-     * Place the food randomly on the board, by adding the class 'food' to one of the cells
+     * Place the food randomly on the boardEl, by adding the class 'food' to one of the cells
      */
     move() {
 
+        let invalidPosition = true;
+        let nextFood;
+
+        do {
+            const x = Math.floor(Math.random() * SnakeGame.NUM_COLS);
+            const y = Math.floor(Math.random() * SnakeGame.NUM_ROWS);
+            nextFood = this.game.board[y][x];
+
+            const snakeClash = nextFood.classList.contains('snake');
+            const foodClash = nextFood.classList.contains('food');
+
+            if(!snakeClash && !foodClash){
+                invalidPosition = false;
+            }
+
+            if(snakeClash) console.log("Snake clash");
+            if(foodClash) console.log("Food clash")
+
+        } while (invalidPosition);
+
+        nextFood.innerText = this.game.getRandomEmoji();
+
         if(this.currentFood){
-            
             this.reset()
         }
 
-        // Ensure food doesn't spawn on tail
-        let foodOnTail = true;
-        let x = null;
-        let y = null;
-        let foodTile = null;
-
-        while(foodOnTail){
-            x = Math.floor(Math.random() * SnakeGame.NUM_COLS);
-            y = Math.floor(Math.random() * SnakeGame.NUM_ROWS);
-            foodTile = this.game.boardCells[y][x];
-
-            if(!foodTile.classList.contains('snake')){
-                foodOnTail = false;
-            }
-
-        }
-        
-        console.log(foodTile)
-        foodTile.innerText = this.game.getRandomEmoji();
-
-        foodTile.classList.add('food');
-        this.currentFood = foodTile;
+        nextFood.classList.add('food');
+        this.currentFood = nextFood;
     }
 
     reset(){
         this.currentFood.classList.remove('food');
         this.currentFood.innerText = "";
-        this.currentFood = null;
     }
 
 }

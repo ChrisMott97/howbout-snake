@@ -26,28 +26,19 @@
                 </span>
             </div>
         </div>
-        <div id="legend">
-            <div id="top-row">
-                <button onclick="game.snake.setDirection('up')"><kbd>W</kbd></button>
-            </div>
-            <div id="bottom-row">
-                <button onclick="game.snake.setDirection('left')"><kbd>A</kbd></button>
-                <button onclick="game.snake.setDirection('down')"><kbd>S</kbd></button>
-                <button onclick="game.snake.setDirection('right')"><kbd>D</kbd></button>
-            </div>
-        </div>
-        <div id="controls">
-            <div>
-                <button class="play-button" onclick="game.play()">Play</button>
-                <button class="restart-button" onclick="game.restart()">Restart</button>
-                <button class="pause-button" onclick="game.snake.pause()">Pause</button>
-                <button class="resume-button" onclick="game.snake.move()">Resume</button>
-            </div>
-        </div>
     </div>
     <div id="board">
         <div id="gameOver">
             <h1>Game Over!</h1>
+            <h2>Scoreboard</h2>
+            <div id="scoreboard">
+                <table></table>
+            </div>
+            <h3>Submit your name to be seen on the high score board!</h3>
+            <form id="nameForm">
+                <input type="text" name="name" id="nameInput">
+                <button id="nameSubmit">Submit</button>
+            </form>
         </div>
     </div>
     <div id="right-col">
@@ -56,9 +47,24 @@
             <h2 class="score">0</h2>
         </div>
         <div id="right-col-bottom">
-            <h2>Scoreboard</h2>
-            <div id="scoreboard">
-                <table></table>
+            <h2>Controls</h2>
+            <div id="legend">
+                <div id="top-row">
+                    <button onclick="game.snake.setDirection('up')"><kbd>W</kbd></button>
+                </div>
+                <div id="bottom-row">
+                    <button onclick="game.snake.setDirection('left')"><kbd>A</kbd></button>
+                    <button onclick="game.snake.setDirection('down')"><kbd>S</kbd></button>
+                    <button onclick="game.snake.setDirection('right')"><kbd>D</kbd></button>
+                </div>
+            </div>
+            <div id="controls">
+                <div>
+                    <button class="play-button" onclick="game.play()">Play</button>
+                    <button class="restart-button" onclick="game.restart()">Restart</button>
+                    <button class="pause-button" onclick="game.snake.pause()">Pause</button>
+                    <button class="resume-button" onclick="game.snake.move()">Resume</button>
+                </div>
             </div>
         </div>
         
