@@ -158,6 +158,7 @@ class SnakeGame {
         this.controlsEl.classList.add('game-over');
         this.boardEl.classList.add('game-over');
         this.scoreboard.resetVisibility();
+        this.scoreboard.nameInputEl.focus()
 
     }
 
@@ -424,6 +425,7 @@ class Food {
 }
 
 class Scoreboard {
+    // Should be stored in secret manager or behind a backend
     static API_KEY = 'mott';
     static URL = `https://snake.howbout.app/api/${Scoreboard.API_KEY}/high-scores`;
 
@@ -546,12 +548,12 @@ class Scoreboard {
         const generateHeadRow = () => {
             const row = document.createElement('tr');
             const headings = ['Score', 'Name', 'Date']
-            const ids = ['score', 'name', 'date']
+            const classes = ['score-header', 'name-header', 'date-header']
 
             for (const [i, heading] of headings.entries()) {
                 let th = document.createElement('th');
                 th.innerHTML = `<u>${heading}</u>`;
-                th.id = ids[i]
+                th.classList.add(classes[i])
                 row.appendChild(th);
             }
 
