@@ -1,7 +1,7 @@
 # Howbout... a game of Snake?
 
 ## Challenge
-Snake should e implemented in HTML, JavaScript and CSS based on the partial implementation provided. Complete the creation of the game and implement the High Scores feature.
+Snake should be implemented in HTML, JavaScript and CSS based on the partial implementation provided. Complete the creation of the game and implement the High Scores feature.
 
 The project plan can be found at [PLAN.md](./PLAN.md)
 ## Rules
