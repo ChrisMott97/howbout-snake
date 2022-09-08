@@ -11,8 +11,13 @@
   - [x] Wall
   - [x] Tail
   - [x] Food
-- [ ] Implement scoreboard score submission
+- [x] Implement scoreboard score submission
+  - [x] Don't allow 0 score submission
+  - [x] Don't allow no name submission
+  - [x] Handle API not reachable
 - [x] Implement scoreboard view
+  - [x] Handle API not reachable
+  - [x] Handle API returns nothing
 - [x] Design Howbout-like interface around game
 - [ ] Scale emojis with varying size board grid
 - [x] Queue 2 moves to ensure accurate input

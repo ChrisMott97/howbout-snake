@@ -10,19 +10,11 @@ class SnakeGame {
     constructor(boardEl, controlsEl) {
         this.boardEl = boardEl;
         this.controlsEl = controlsEl;
-
         this.scoreEl = document.querySelector('.score');
-        this.scoreboard = document.querySelector('.scoreboard');
-        this.nameForm = document.querySelector('#nameForm');
-        this.nameInput = document.querySelector('#nameInput');
-
-        this.nameForm.addEventListener("submit", function(evt) {
-            evt.preventDefault();
-        }, true);
 
         this.initBoard();
-        this.refreshScoreboard();
 
+        this.scoreboard = new Scoreboard(this);
         this.snake = new Snake(this);
         this.food = new Food(this);
 
@@ -124,65 +116,6 @@ class SnakeGame {
     }
 
     /**
-     * Build and load the scoreboard
-     */
-    refreshScoreboard() {
-
-        const generateHeadRow = () => {
-            const row = document.createElement('tr');
-            const headings = ['Score', 'Name', 'Date']
-            const ids = ['score', 'name', 'date']
-
-            for (const [i, heading] of headings.entries()) {
-                let th = document.createElement('th');
-                th.innerHTML = `<u>${heading}</u>`;
-                th.id = ids[i]
-                row.appendChild(th);
-            }
-
-            return row;
-        }
-
-        const generateScoreRow = (record) => {
-            const row = document.createElement('tr');
-            const props = ['score', 'name', 'created_at']
-
-            for (const prop of props) {
-                let td = document.createElement('td');
-                if(prop === 'created_at'){
-                    td.innerHTML = new Date(record[prop]).toLocaleDateString();
-                }else{
-                    td.innerHTML = record[prop];
-                }
-                row.appendChild(td);
-            }
-
-            return row;
-        }
-
-        const scoreboard = document.querySelector('#scoreboard>table')
-
-        // Clear all elements to refresh scoreboard
-        scoreboard.replaceChildren();
-
-        const headRow = generateHeadRow();
-        scoreboard.appendChild(headRow);
-
-        fetch("https://snake.howbout.app/api/mott/high-scores").then((res) => {
-            if(res.ok){
-                res.json().then((records)=>{
-                    records = records.sort((a, b) => b.score - a.score);
-                    for (const record of records) {
-                        const el = generateScoreRow(record);
-                        scoreboard.appendChild(el);
-                    }
-                })
-            }
-        })
-
-    }
-
-    /**
      * Begin the game
      */
     play() {
@@ -224,6 +157,7 @@ class SnakeGame {
         this.controlsEl.classList.remove('playing');
         this.controlsEl.classList.add('game-over');
         this.boardEl.classList.add('game-over');
+        this.scoreboard.resetVisibility();
 
     }
 
@@ -487,4 +421,172 @@ class Food {
         this.currentFood.innerText = "";
     }
 
+}
+
+class Scoreboard {
+    static API_KEY = 'mott';
+    static URL = `https://snake.howbout.app/api/${Scoreboard.API_KEY}/high-scores`;
+
+    #records = [];
+
+    constructor(game){
+        this.game = game;
+
+        this.scoreboardEl = document.querySelector('#scoreboard>table');
+        this.nameFormEl = document.querySelector('#name-form');
+        this.nameInputEl = document.querySelector('#name-input');
+        this.submitAreaEl = document.querySelector('#submit-score');
+        this.thankYouEl = document.querySelector('#thank-you');
+        this.tryAgainEl = document.querySelector('#try-again');
+        this.errorEl = document.querySelector('#error>h3');
+
+
+        this.retrieveRecords().then((retrievedRecords)=>{
+            this.records = retrievedRecords;
+        }).catch(err => {
+            this.scoreboardEl.textContent = err;
+        })
+
+        this.nameFormEl.addEventListener("submit", (evt) => {
+            evt.preventDefault();
+            let nameValue = this.nameInputEl.value;
+            let scoreValue = this.game.score;
+
+            let record = this.constructRecord(nameValue, scoreValue);
+
+            this.submitRecord(record).then(()=>{
+                this.retrieveRecords().then((retrievedRecords)=>{
+                    this.records = retrievedRecords;
+                }).catch(err => {
+                    this.scoreboardEl.textContent = err;
+                })
+
+                this.submitAreaEl.classList.add('hidden');
+                this.thankYouEl.classList.remove('hidden');
+                
+            }).catch(err => {
+                this.submitAreaEl.classList.add('hidden');
+                this.errorEl.textContent = `${err} Want to play again?`;
+            })
+
+        }, true);
+    }
+
+    get records(){
+        return this.#records;
+    }
+
+    set records(newRecords){
+        this.#records = newRecords;
+        this.buildScoreboard(newRecords);
+    }
+
+    resetVisibility(){
+        if(this.records.length === 0){
+            this.retrieveRecords().then((retrievedRecords)=>{
+                this.records = retrievedRecords;
+            }).catch(err => {
+                this.scoreboardEl.textContent = err;
+            })
+        }
+
+        this.thankYouEl.classList.add('hidden');
+        this.errorEl.textContent = "";
+
+        if(this.game.score === 0){
+            this.tryAgainEl.classList.remove('hidden');
+            this.submitAreaEl.classList.add('hidden');
+        }else{
+            this.submitAreaEl.classList.remove('hidden');
+            this.tryAgainEl.classList.add('hidden');
+        }
+    }
+
+    constructRecord(name, score){
+        const record = {name, score}
+        return record;
+    }
+
+    async submitRecord(record){
+        try {
+            const res = await fetch(Scoreboard.URL, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(record),
+            })
+            if(!res.ok){
+                return Promise.reject("Scoreboard could not be accessed.")
+            }
+        } catch (error) {
+            return Promise.reject("Internet connection unavailable.")
+        }
+    }
+
+    async retrieveRecords(){
+        try{
+            const res = await fetch(Scoreboard.URL);
+            if(res.ok){
+                const records = await res.json();
+                return records.sort((a, b) => b.score - a.score)
+            }else{
+                return Promise.reject("Scoreboard could not be accessed.")
+            }
+        } catch (error) {
+            return Promise.reject("Internet connection unavailable.")
+        }
+    }
+
+    /**
+     * Build and load the scoreboard
+     */
+     buildScoreboard(records) {
+
+        const generateHeadRow = () => {
+            const row = document.createElement('tr');
+            const headings = ['Score', 'Name', 'Date']
+            const ids = ['score', 'name', 'date']
+
+            for (const [i, heading] of headings.entries()) {
+                let th = document.createElement('th');
+                th.innerHTML = `<u>${heading}</u>`;
+                th.id = ids[i]
+                row.appendChild(th);
+            }
+
+            return row;
+        }
+
+        const generateScoreRow = (record) => {
+            const row = document.createElement('tr');
+            const props = ['score', 'name', 'created_at']
+
+            for (const prop of props) {
+                let td = document.createElement('td');
+                if(prop === 'created_at'){
+                    td.innerHTML = new Date(record[prop]).toLocaleDateString();
+                }else{
+                    td.innerHTML = record[prop];
+                }
+                row.appendChild(td);
+            }
+
+            return row;
+        }
+
+        // Clear all elements to refresh scoreboard
+        this.scoreboardEl.replaceChildren();
+
+        const headRow = generateHeadRow();
+        this.scoreboardEl.appendChild(headRow);
+
+        if(!records.length === 0){
+            for (const record of records) {
+                const el = generateScoreRow(record);
+                this.scoreboardEl.appendChild(el);
+            }
+        }
+
+    }
 }

@@ -34,11 +34,22 @@
             <div id="scoreboard">
                 <table></table>
             </div>
-            <h3>Submit your name to be seen on the high score board!</h3>
-            <form id="nameForm">
-                <input type="text" name="name" id="nameInput">
-                <button id="nameSubmit">Submit</button>
-            </form>
+            <div id="submit-score">
+                <h3>Submit your name to be seen on the high score board!</h3>
+                <form id="name-form">
+                    <input type="text" name="name" id="name-input" required>
+                    <button id="name-submit">Submit</button>
+                </form>
+            </div>
+            <div class="hidden" id="thank-you">
+                <h3>Thanks for submitting your score! Why not play again?</h3>
+            </div>
+            <div class="hidden" id="try-again">
+                <h3>Better luck next time! Get a score above 0 to contribute to the score board!</h3>
+            </div>
+            <div id="error">
+                <h3></h3>
+            </div>
         </div>
     </div>
     <div id="right-col">

@@ -4,6 +4,7 @@
     font-weight: 500;
     src: url(./assets/fonts/pacifico/Pacifico.ttf) format('truetype');
 }
+
 @font-face {
     font-family: 'Montserrat';
     font-style: normal;
@@ -12,7 +13,8 @@
 }
 
 
-html, body {
+html,
+body {
     margin: 0;
     font-family: "Montserrat";
 }
@@ -22,7 +24,8 @@ html, body {
     justify-content: center;
     align-items: center;
 }
-#left-col{
+
+#left-col {
     width: auto;
     flex: 1;
     display: flex;
@@ -35,7 +38,8 @@ html, body {
     border-radius: 20px;
     height: 80vh;
 }
-#right-col{
+
+#right-col {
     width: auto;
     flex: 1;
     display: flex;
@@ -48,7 +52,8 @@ html, body {
     height: 80vh;
     color: white;
 }
-#right-col-top{
+
+#right-col-top {
     background-color: #00e0d1;
     flex: 1;
     border-radius: 20px;
@@ -56,7 +61,8 @@ html, body {
     width: 100%;
     text-align: center;
 }
-#right-col-bottom{
+
+#right-col-bottom {
     background-color: #00e0d1;
     flex: 2;
     border-radius: 20px;
@@ -65,57 +71,71 @@ html, body {
     margin-top: 10px;
     text-align: center;
 }
-#brief{
+
+#brief {
     margin: 20px;
     color: white;
     font-size: 1.5rem;
     text-align: center;
 }
-.score{
+
+.score {
     text-align: center;
     font-size: 4rem;
     margin: 0px;
 }
-#logo-row, #description-row{
+
+#logo-row,
+#description-row {
     display: flex;
     width: 100%;
     justify-content: center;
 }
-#logo-row{
+
+#logo-row {
     margin-top: 10px;
 }
-#description-row{
+
+#description-row {
     margin-top: -10px;
     margin-bottom: 5px;
     color: #cc427b;
 }
-#logo{
+
+#logo {
     margin-right: 200px;
     height: 8vh;
 }
-#description{
+
+#description {
     margin-left: 200px;
     font-size: 1.8rem;
     font-family: "Pacifico";
 }
 
-#controls.playing .play-button, #controls.game-over .play-button {
+#controls.playing .play-button,
+#controls.game-over .play-button {
     display: none;
 }
-#controls:not(.playing) .pause-button, #controls:not(.playing) .resume-button {
+
+#controls:not(.playing) .pause-button,
+#controls:not(.playing) .resume-button {
     display: none;
 }
+
 #controls.paused .pause-button {
     display: none;
 }
+
 #controls:not(.paused) .resume-button {
     display: none;
 }
+
 #controls:not(.game-over) .restart-button {
     display: none;
 }
 
-#controls>div>button{
+#controls>div>button {
     width: 15vw;
     height: 5vh;
     background-color: transparent;
@@ -126,28 +146,31 @@ html, body {
     font-size: 1.5rem;
     box-shadow: 4px 4px #fff;
 }
-#controls>div>button:hover{
+
+#controls>div>button:hover {
     box-shadow: 2px 2px;
 }
-#controls>div>button:active{
+
+#controls>div>button:active {
     box-shadow: 0px 0px;
 }
 
-#left-col, #legend{
+#left-col,
+#legend {
     display: flex;
     flex-direction: column;
     align-content: center;
 }
 
-#left-col{
+#left-col {
     justify-content: space-around;
 }
 
-#legend{
+#legend {
     margin: 10px;
 }
 
-#legend>div>button{
+#legend>div>button {
     width: 6vw;
     height: 10vh;
     background-color: transparent;
@@ -160,8 +183,8 @@ html, body {
     margin: 5px;
 }
 
-#top-row{
-    display:flex;
+#top-row {
+    display: flex;
     align-content: center;
     justify-content: space-evenly;
     margin-bottom: 3px;
@@ -191,6 +214,7 @@ div.row {
     text-align: center;
     justify-content: center;
 }
+
 div.col {
     flex: 1;
     /* height: 20px; */
@@ -200,6 +224,7 @@ div.col {
     text-align: center;
     justify-content: center;
 }
+
 div.col.snake {
     /* border-radius: 20px; */
 }
@@ -224,13 +249,14 @@ div#gameOver {
     text-align: center;
     padding-top: 50px;
     box-sizing: border-box;
-    
+
 }
+
 #board.game-over div#gameOver {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgba(255,255,255,0.8);
+    background-color: rgba(255, 255, 255, 0.8);
     border-radius: 20px;
 }
 
@@ -238,7 +264,7 @@ div#gameOver {
     border: solid;
 } */
 
-table{
+table {
     padding-right: 10px;
     padding-left: 10px;
     /* margin-top: 50px; */
@@ -251,26 +277,33 @@ table{
     white-space: nowrap;
     font-size: 1rem;
 }
-#scoreboard{
+
+#scoreboard {
     width: 80%;
     text-align: center;
     border-top: solid 2px;
     border-bottom: solid 2px;
 }
-td, th{
+
+td,
+th {
     width: auto;
 }
-#name{
+
+#name {
     width: 100%;
 }
-#date{
+
+#date {
     width: 300px;
     white-space: nowrap;
 }
-#score{
+
+#score {
     width: 100px;
 }
-form>input{
+
+form>input {
     width: 30%;
     margin-top: 5px;
     padding: 5px;
@@ -278,7 +311,7 @@ form>input{
     border-radius: 5px;
 }
 
-form>button{
+form>button {
     background-color: transparent;
     border: solid;
     color: black;
@@ -289,3 +322,6 @@ form>button{
     margin: 5px;
 }
 
+.hidden{
+    display: none;
+}
