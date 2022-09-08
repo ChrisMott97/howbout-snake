@@ -21,7 +21,7 @@
 - [x] Design Howbout-like interface around game
 - [x] Queue 2 moves to ensure accurate input
 - [ ] Add Space keyboard shortcut to pause and play
-- [ ] Decide on collision based on current snake or next snake
+- [x] Decide on collision based on current snake or next snake
 - [ ] Scale emojis with varying size board grid
 - [ ] Check font-scaling on different sized windows
 - [ ] Plan end-to-end tests

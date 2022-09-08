@@ -213,8 +213,8 @@ div.row {
 
 div.col {
     flex: 1;
-    font-size: 3vh;
-    line-height: 3vh;
+    font-size: 1.7rem;
+    line-height: 1.7rem;
     text-align: center;
     justify-content: center;
 }

@@ -17,6 +17,7 @@ class SnakeGame {
         this.scoreboard = new Scoreboard(this);
         this.snake = new Snake(this);
         this.food = new Food(this);
+        this.powerup = new ReversePowerup(this)
 
         window.addEventListener('keydown', (event) => {
             switch (event.key) {
@@ -92,6 +93,12 @@ class SnakeGame {
 
     }
 
+    boordCoordsExist(x,y){
+        const yValid = (y < SnakeGame.NUM_ROWS) && (y >= 0)
+        const xValid = (x < SnakeGame.NUM_COLS) && (x >= 0)
+        return yValid && xValid
+    }
+
     get score(){
         return this.#score;
     }
@@ -124,7 +131,6 @@ class SnakeGame {
 
         this.snake.move();
         this.food.move();
-
     }
 
     /**
@@ -167,11 +173,21 @@ class SnakeGame {
 class Snake {
 
     static STARTING_EDGE_OFFSET = 6;
+    #headEmoji = "😎";
 
     constructor(game) {
         this.setDefaults();
         this.game = game;
         this.init();
+    }
+
+    set headEmoji(newEmoji){
+        this.#headEmoji = newEmoji;
+        this.tailSpecifics[0] = newEmoji
+    }
+
+    get headEmoji(){
+        return this.#headEmoji;
     }
 
     setDefaults(){
@@ -183,7 +199,8 @@ class Snake {
         this.direction = 'up';
         this.speed = 160;
         this.moving = false;
-        this.headEmoji = "😎";
+        this.#headEmoji = "😎";
+        this.reversed = 0;
     }
 
     /**
@@ -217,12 +234,12 @@ class Snake {
 
         if(this.tail.length > this.tailLength){
             partToRemove.classList.remove('snake');
-            partToRemove.innerText = "";
+            partToRemove.textContent = "";
             this.tail.shift()
         }
 
         for (const [i, part] of this.tail.entries()) {
-            part.innerText = reversedTailSpecifics[i]
+            part.textContent = reversedTailSpecifics[i]
         }
     }
 
@@ -267,9 +284,42 @@ class Snake {
         const {x,y} = this.position;
         const nextSnake = this.game.board[y][x];
 
-        if(nextSnake === this.game.food.currentFood){
-            this.upgrade()
+        if(nextSnake === this.game.food.currentItem){
+
+            // upgrade snake differently while in reversed mode
+            if(this.reversed > 0){
+                this.partialUpgrade()
+            }else{
+                this.fullUpgrade()
+            }
+
             this.game.food.move()
+
+            if(!this.game.powerup.spawned && this.reversed === 0){
+                this.game.powerup.move()
+            }
+
+            if(this.game.food.currentItem === this.game.powerup.currentItem){
+                console.log("food in same place as powerup :(")
+            }
+
+            if(this.reversed > 0){
+                this.reversed -= 1
+            }
+
+            if(this.reversed === 1){
+                this.headEmoji = "🤮"
+            }
+            
+            if(this.reversed === 0){
+                this.headEmoji = "😎";
+            }
+        }
+
+        if(nextSnake === this.game.powerup.currentItem){
+            this.game.powerup.spawned = false;
+            this.reversed = 3;
+            this.headEmoji = "🤢"
         }
 
         nextSnake.classList.add('snake');
@@ -286,6 +336,10 @@ class Snake {
      * Set the snake's direction
      */
     setDirection(direction) {
+        if(this.reversed > 0){
+            direction = this.reverseDirection(direction);
+        }
+
         const firstItemCheck = !(this.direction === this.reverseDirection(direction)) && !(this.direction === direction)
         const secondItemCheck = !(this.directionQueue[0] === this.reverseDirection(direction)) && !(this.directionQueue[0] === direction)
         switch(this.directionQueue.length){
@@ -308,11 +362,17 @@ class Snake {
         
     }
 
-    upgrade(){
+    fullUpgrade(){
         this.game.increaseScore();
         this.speed -= 2;
         this.tailLength += 1;
-        this.tailSpecifics.push(this.game.food.currentFood.innerText)
+        this.tailSpecifics.push(this.game.food.currentItem.textContent)
+    }
+
+    partialUpgrade(){
+        this.game.increaseScore(3);
+        this.tailLength += 1;
+        this.tailSpecifics.push(this.game.food.currentItem.textContent)
     }
 
     reverseDirection(direction){
@@ -375,53 +435,89 @@ class Snake {
 
 }
 
-class Food {
-
-    constructor(game) {
+class Item {
+    constructor(game, itemTag, probability = 1.0) {
         this.game = game;
-        this.currentFood = null;
+        this.currentItem;
+        this.itemTag = itemTag;
+        this.probability = probability;
+        this.spawned = false;
     }
 
-    /**
-     * Place the food randomly on the boardEl, by adding the class 'food' to one of the cells
-     */
     move() {
+        if(this.probability != 1.0){
+            let random = Math.random();
+            if(random > this.probability){
+                return;
+            }
+        }
 
         let invalidPosition = true;
-        let nextFood;
+        let nextItem;
 
         do {
             const x = Math.floor(Math.random() * SnakeGame.NUM_COLS);
             const y = Math.floor(Math.random() * SnakeGame.NUM_ROWS);
-            nextFood = this.game.board[y][x];
+            nextItem = this.game.board[y][x];
 
-            const snakeClash = nextFood.classList.contains('snake');
-            const foodClash = nextFood.classList.contains('food');
+            let snakeClash = nextItem.classList.contains('snake');
+            const itemClash = nextItem.classList.contains('item');
+            
+            const checks = []
 
-            if(!snakeClash && !foodClash){
+            if(this.game.boordCoordsExist(x, y-1)) checks.push(this.game.board[y-1][x])
+            if(this.game.boordCoordsExist(x, y+1)) checks.push(this.game.board[y+1][x])
+            if(this.game.boordCoordsExist(x+1, y)) checks.push(this.game.board[y][x+1])
+            if(this.game.boordCoordsExist(x-1, y)) checks.push(this.game.board[y][x-1])
+
+            for (const check of checks) {
+                if(check && check.classList.contains('snake')){
+                    snakeClash = true
+                    break;
+                }
+            }
+
+            if(!snakeClash && !itemClash){
                 invalidPosition = false;
             }
 
-            if(snakeClash) console.log("Snake clash");
-            if(foodClash) console.log("Food clash")
-
         } while (invalidPosition);
 
-        nextFood.innerText = this.game.getRandomEmoji();
+        nextItem.textContent = this.getEmoji();
 
-        if(this.currentFood){
+        if(this.currentItem){
             this.reset()
         }
 
-        nextFood.classList.add('food');
-        this.currentFood = nextFood;
+        nextItem.classList.add('item');
+        nextItem.classList.add(this.itemTag)
+        this.spawned = true;
+        this.currentItem = nextItem;
+    }
+
+    getEmoji(){
+        return this.game.getRandomEmoji();
     }
 
     reset(){
-        this.currentFood.classList.remove('food');
-        this.currentFood.innerText = "";
+        this.currentItem.classList.remove('item');
+        this.currentItem.classList.remove(this.itemTag)
+        this.currentItem.textContent = "";
     }
+}
+class Food extends Item{
+    constructor(game) {
+        super(game, "food", 1.0)
+    }
+}
 
+class ReversePowerup extends Item{
+    constructor(game){
+        super(game, "reverse", 0.5)
+    }
+    getEmoji(){
+        return "🤪"
+    }
 }
 
 class Scoreboard {
