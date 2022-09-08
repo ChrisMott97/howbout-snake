@@ -581,7 +581,7 @@ class Scoreboard {
         const headRow = generateHeadRow();
         this.scoreboardEl.appendChild(headRow);
 
-        if(!records.length === 0){
+        if(records.length){
             for (const record of records) {
                 const el = generateScoreRow(record);
                 this.scoreboardEl.appendChild(el);
