@@ -23,6 +23,8 @@ The project plan can be found at [PLAN.md](./PLAN.md)
 ### Developer
 - Tests can be run at https://chrismott97.github.io/howbout-snake/snake.html?test and results can be viewed in the developer console.
 - Development environment can be run by opening `snake.html` or by running `docker compose up` in the correct directory, should Docker be used. **Docker is recommended as it is more similar to a production environment.**
+- If using Docker, the game can be found at http://localhost:8085/snake.html
+- Port used can be changed in `docker-compose.yml`
 ## API Contract
 - **Base URL** `https://snake.howbout.app/api/{your api key}`
 - **Get** `/high-scores`

@@ -2,8 +2,8 @@
 ## Checklist
 - [x] Add Docker support
 - [x] Implement basic test library
-- [ ] Reset function to reset classes and HTML for testing
-- [ ] Test existing code
+- [x] Reset function to reset classes and HTML for testing
+- [x] Test existing code
 - [x] Implement Snake body movement
 - [x] Implement Snake tail creation and movement
 - [x] Implement Food generation
@@ -32,13 +32,13 @@
   - [ ] SnakeGame
   - [ ] Snake
   - [ ] Food
-- [ ] SnakeGame initBoard creates correct amount of divs as static props
+- [x] SnakeGame initBoard creates correct amount of divs as static props
 - [ ] SnakeGame score increase variable check
 - [ ] All SnakeGame method DOM checks(?)
 ### New Code
 - [ ] Snake hitting wall will end game
 - [ ] Snake hitting self will end game
-- [ ] Snake hitting food will speed up, add length and add score
+- [x] Snake hitting food will speed up, add length and add score
 - [ ] WASD/Up/Down/Left/Right trigger correct directions
 - [ ] Triggering the same direction or opposite should have no effect
 - [ ] Ending the game triggers scoreboard submission

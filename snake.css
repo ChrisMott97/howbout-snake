@@ -271,6 +271,13 @@ div#gameOver {
     width: 100%;
 }
 
+.limit {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 10vw;
+}
+
 .date-header {
     width: 5vw;
     white-space: nowrap;
